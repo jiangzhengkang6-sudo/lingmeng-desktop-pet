@@ -1,0 +1,7 @@
+{
+  "AgentConfig": {
+    "WelcomeMessage": "",
+    "EnableConversationStateCallback": true
+  },
+  "Config": {}
+}

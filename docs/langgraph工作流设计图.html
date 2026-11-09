@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LangGraph 工作流设计图 · 桌宠智能体编排</title>
+<style>
+  :root { --ink:#1c2230; --soft:#4c5566; --muted:#8a93a5; --line:#e6e9f0; --bg:#f6f7fb;
+    --blue:#3564e0; --green:#1f9d61; --orange:#e8821e; --purple:#7a4fd0; --red:#d94848; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif; background:var(--bg);
+    color:var(--ink); line-height:1.75; font-size:15px; }
+  .wrap { max-width:1020px; margin:0 auto; padding:36px 24px 70px; }
+  header { background:linear-gradient(128deg,#2b3fb5,#3564e0 45%,#7a4fd0); color:#fff;
+    border-radius:14px; padding:30px 34px; margin-bottom:26px; }
+  header h1 { font-size:24px; } header p { opacity:.92; font-size:14px; margin-top:6px; }
+  h2 { font-size:19px; margin:38px 0 12px; padding-left:12px; border-left:4px solid var(--blue); }
+  p { color:var(--soft); margin:8px 0; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:20px 24px; margin:14px 0; }
+  .diagram { background:#fff; border:1px solid var(--line); border-radius:12px; padding:18px; margin:14px 0; overflow-x:auto; }
+  pre { background:#0f1626; color:#d9e2f5; border-radius:10px; padding:18px 20px; overflow-x:auto;
+    font-family:Consolas,"Courier New",monospace; font-size:13px; line-height:1.7; }
+  pre .c { color:#7fa3d8; } pre .k { color:#8fd3a7; } pre .s { color:#e8c98f; }
+  table { width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--line);
+    border-radius:10px; overflow:hidden; font-size:13.5px; }
+  th,td { padding:9px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+  th { background:#eaf0fd; font-weight:600; white-space:nowrap; }
+  tr:last-child td { border-bottom:none; }
+  code { background:#eef1f6; border-radius:4px; padding:1px 6px; font-family:Consolas,monospace; font-size:12.8px; color:#2b3a67; }
+  .tag { display:inline-block; border-radius:999px; padding:2px 12px; font-size:12px; font-weight:600; }
+  .tag.b { background:#eaf0fd; color:var(--blue); } .tag.g { background:#e8f6ef; color:var(--green); }
+  .tag.o { background:#fdf3e3; color:var(--orange); } .tag.p { background:#f1ebfc; color:var(--purple); }
+  .note { background:#eaf0fd; border-left:4px solid var(--blue); border-radius:8px; padding:12px 16px;
+    font-size:13.8px; color:#2b3a67; margin:14px 0; }
+  .legend { display:flex; gap:14px; flex-wrap:wrap; margin:10px 0 0; font-size:12.5px; color:var(--soft); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>桌宠智能体 · LangGraph 工作流设计图</h1>
+  <p>目标：将 backend/app/agent.py 的自研编排管线（AgentService.respond）迁移为 LangGraph StateGraph ｜ 接口不变、绞杀式替换、143 个后端测试作安全网 ｜ 2026-10-27</p>
+</header>
+
+<h2>一、状态机总图（StateGraph）</h2>
+<div class="note">图中节点与现有代码一一对应（见第四节映射表）。<b>菱形为条件边（conditional edges）</b>，虚线框标注的是第二阶段引入 <code>interrupt()</code> 人机协作审批的位置。</div>
+
+<div class="diagram">
+<svg viewBox="0 0 1000 1150" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Microsoft YaHei, sans-serif">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#5b6478"/>
+    </marker>
+  </defs>
+  <style>
+    .nt { font-size:13px; font-weight:600; fill:#1c2230; }
+    .ns { font-size:10.5px; fill:#6b7488; }
+    .e  { stroke:#5b6478; stroke-width:1.6; fill:none; marker-end:url(#ar); }
+    .el { font-size:11px; font-weight:600; fill:#3564e0; }
+    .elg { font-size:11px; font-weight:600; fill:#1f9d61; }
+    .elo { font-size:11px; font-weight:600; fill:#e8821e; }
+  </style>
+
+  <!-- START -->
+  <circle cx="500" cy="38" r="24" fill="#3564e0"/>
+  <text x="500" y="43" text-anchor="middle" fill="#fff" font-size="12.5" font-weight="700">START</text>
+
+  <!-- assemble_context -->
+  <rect x="375" y="86" width="250" height="76" fill="#eaf0fd" stroke="#3564e0" stroke-width="1.6" rx="11"/>
+  <text x="500" y="112" text-anchor="middle" class="nt">assemble_context</text>
+  <text x="500" y="130" text-anchor="middle" class="ns">会话历史 · 身份快照 · Persona</text>
+  <text x="500" y="146" text-anchor="middle" class="ns">确认记忆(仅owner) · RAG top-3 → rag_status</text>
+  <line x1="500" y1="62" x2="500" y2="86" class="e"/>
+
+  <!-- plan_voice_tool -->
+  <rect x="375" y="196" width="250" height="66" fill="#eaf0fd" stroke="#3564e0" stroke-width="1.6" rx="11"/>
+  <text x="500" y="222" text-anchor="middle" class="nt">plan_voice_tool</text>
+  <text x="500" y="240" text-anchor="middle" class="ns">本地正则规划器：明确指令 → tool_plan</text>
+  <text x="500" y="255" text-anchor="middle" class="ns">（零大模型消耗 · 防误触发）</text>
+  <line x1="500" y1="162" x2="500" y2="196" class="e"/>
+
+  <!-- 条件边1 菱形 -->
+  <polygon points="500,330 395,382 500,434 605,382" fill="#fdf3e3" stroke="#e8821e" stroke-width="1.6"/>
+  <text x="500" y="374" text-anchor="middle" class="nt" font-size="13">route_input</text>
+  <text x="500" y="392" text-anchor="middle" class="ns">tool_plan 存在？ / provider=mock？</text>
+  <line x1="500" y1="262" x2="500" y2="330" class="e"/>
+
+  <!-- execute_controlled_tool（右） -->
+  <rect x="690" y="270" width="250" height="76" fill="#e8f6ef" stroke="#1f9d61" stroke-width="1.6" rx="11"/>
+  <text x="815" y="296" text-anchor="middle" class="nt">execute_controlled_tool</text>
+  <text x="815" y="314" text-anchor="middle" class="ns">get_time / open_application / control_music…</text>
+  <text x="815" y="330" text-anchor="middle" class="ns">白名单+审批+审计（四层边界）</text>
+  <line x1="600" y1="366" x2="690" y2="322" class="e"/>
+  <text x="610" y="342" class="elg">yes：命中明确指令</text>
+
+  <!-- interrupt 徽标 -->
+  <rect x="760" y="200" width="210" height="44" fill="#ffffff" stroke="#e8821e" stroke-width="1.4" stroke-dasharray="6 4" rx="9"/>
+  <text x="865" y="218" text-anchor="middle" font-size="11.5" font-weight="600" fill="#e8821e">⏸ Phase-2：interrupt()</text>
+  <text x="865" y="234" text-anchor="middle" font-size="10.5" fill="#a9884f">中风险工具 → 挂起等人工审批</text>
+  <line x1="865" y1="244" x2="840" y2="270" stroke="#e8821e" stroke-width="1.3" stroke-dasharray="5 4"/>
+
+  <!-- format_tool_response -->
+  <rect x="705" y="392" width="220" height="58" fill="#e8f6ef" stroke="#1f9d61" stroke-width="1.4" rx="11"/>
+  <text x="815" y="416" text-anchor="middle" class="nt">format_tool_response</text>
+  <text x="815" y="433" text-anchor="middle" class="ns">审计结果 → 可朗读多语言响应</text>
+  <line x1="815" y1="346" x2="815" y2="392" class="e"/>
+
+  <!-- call_remote_agent（下） -->
+  <rect x="375" y="482" width="250" height="76" fill="#eaf0fd" stroke="#3564e0" stroke-width="1.6" rx="11"/>
+  <text x="500" y="508" text-anchor="middle" class="nt">call_remote_agent</text>
+  <text x="500" y="526" text-anchor="middle" class="ns">Qwen / OpenAI 兼容接口（httpx）</text>
+  <text x="500" y="542" text-anchor="middle" class="ns">JSON Schema 严格结构化输出</text>
+  <line x1="500" y1="434" x2="500" y2="482" class="e"/>
+  <text x="512" y="462" class="el">no：普通对话（provider≠mock）</text>
+
+  <!-- mock_agent（左） -->
+  <rect x="60" y="492" width="220" height="58" fill="#fdf3e3" stroke="#e8821e" stroke-width="1.4" rx="11"/>
+  <text x="170" y="516" text-anchor="middle" class="nt">mock_agent</text>
+  <text x="170" y="533" text-anchor="middle" class="ns">provider=mock 时的确定性响应</text>
+  <line x1="398" y1="398" x2="280" y2="500" class="e"/>
+  <text x="300" y="430" class="elo">provider=mock</text>
+
+  <!-- 条件边2 菱形：输出合法? -->
+  <polygon points="500,622 400,668 500,714 600,668" fill="#eaf0fd" stroke="#3564e0" stroke-width="1.6"/>
+  <text x="500" y="662" text-anchor="middle" class="nt" font-size="13">validate_output</text>
+  <text x="500" y="680" text-anchor="middle" class="ns">JSON Schema + Pydantic 校验</text>
+  <line x1="500" y1="558" x2="500" y2="622" class="e"/>
+
+  <!-- postprocess -->
+  <rect x="380" y="852" width="240" height="92" fill="#f1ebfc" stroke="#7a4fd0" stroke-width="1.6" rx="11"/>
+  <text x="500" y="878" text-anchor="middle" class="nt">postprocess</text>
+  <text x="500" y="896" text-anchor="middle" class="ns">记忆候选落库(仅owner,待确认) · 附加 sources</text>
+  <text x="500" y="912" text-anchor="middle" class="ns">语音动作纠正(idle→speaking) · 写回会话历史</text>
+  <line x1="500" y1="714" x2="500" y2="852" class="e"/>
+  <text x="512" y="760" class="elg">yes：合法输出</text>
+
+  <!-- mock_fallback（左下） -->
+  <rect x="90" y="742" width="230" height="70" fill="#fdf3e3" stroke="#e8821e" stroke-width="1.6" rx="11"/>
+  <text x="205" y="768" text-anchor="middle" class="nt">mock_fallback</text>
+  <text x="205" y="786" text-anchor="middle" class="ns">超时/非法结构 → 本地兜底响应</text>
+  <text x="205" y="801" text-anchor="middle" class="ns">（fallback_to_mock=true 且未强制远程）</text>
+  <line x1="410" y1="692" x2="320" y2="752" class="e"/>
+  <text x="322" y="706" class="elo">no · 允许降级</text>
+
+  <!-- raise_error（右下） -->
+  <rect x="680" y="742" width="230" height="60" fill="#fdeeee" stroke="#d94848" stroke-width="1.5" rx="11"/>
+  <text x="795" y="766" text-anchor="middle" class="nt" fill="#d94848">raise_provider_error</text>
+  <text x="795" y="784" text-anchor="middle" class="ns">不允许降级 → 明确报错，绝不伪装成功</text>
+  <line x1="590" y1="692" x2="680" y2="752" class="e"/>
+  <text x="596" y="708" class="el" fill="#d94848">no · 禁止降级</text>
+
+  <!-- 汇入 postprocess -->
+  <line x1="205" y1="812" x2="205" y2="898" class="e"/>
+  <path d="M 205 898 L 380 898" class="e"/>
+  <line x1="925" y1="452" x2="925" y2="898" class="e"/>
+  <path d="M 925 898 L 620 898" class="e"/>
+
+  <!-- END -->
+  <circle cx="500" cy="1030" r="24" fill="#1c2230"/>
+  <text x="500" y="1035" text-anchor="middle" fill="#fff" font-size="12.5" font-weight="700">END</text>
+  <line x1="500" y1="944" x2="500" y2="1006" class="e"/>
+
+  <!-- 图例 -->
+  <g transform="translate(20,1096)">
+    <text x="0" y="14" font-size="12" fill="#4c5566">图例：</text>
+    <rect x="52" y="2" width="14" height="14" fill="#eaf0fd" stroke="#3564e0" rx="3"/><text x="72" y="14" font-size="12" fill="#4c5566">上下文/模型节点</text>
+    <rect x="180" y="2" width="14" height="14" fill="#e8f6ef" stroke="#1f9d61" rx="3"/><text x="200" y="14" font-size="12" fill="#4c5566">工具执行节点</text>
+    <rect x="308" y="2" width="14" height="14" fill="#fdf3e3" stroke="#e8821e" rx="3"/><text x="328" y="14" font-size="12" fill="#4c5566">Mock/兜底</text>
+    <rect x="420" y="2" width="14" height="14" fill="#f1ebfc" stroke="#7a4fd0" rx="3"/><text x="440" y="14" font-size="12" fill="#4c5566">后处理</text>
+    <polygon points="540,16 552,9 564,16 552,23" fill="#fdf3e3" stroke="#e8821e"/><text x="572" y="14" font-size="12" fill="#4c5566">条件边</text>
+  </g>
+</svg>
+</div>
+<div class="legend"></div>
+
+<h2>二、State 定义（图的状态契约）</h2>
+<div class="card">
+<pre>
+<span class="k">from</span> typing <span class="k">import</span> TypedDict
+
+<span class="k">class</span> <span class="s">AgentState</span>(TypedDict, total=<span class="k">False</span>):
+    <span class="c"># 输入</span>
+    request: AgentRequest            <span class="c"># message / language / session_id / source</span>
+    <span class="c"># assemble_context 产出</span>
+    history: list[ConversationMessage]   <span class="c"># 短期会话上下文（有界 LRU）</span>
+    identity: IdentitySnapshot           <span class="c"># unknown / guest / owner_verified</span>
+    memories: list[MemoryRecord]         <span class="c"># 已确认记忆（仅 owner 非空）</span>
+    persona: PersonaProfile | None       <span class="c"># 人设配置</span>
+    references: list[RagSearchHit]       <span class="c"># RAG 检索片段（不可信标记）</span>
+    rag_status: Literal[<span class="s">"disabled"</span>, <span class="s">"used"</span>, <span class="s">"empty"</span>, <span class="s">"unavailable"</span>]
+    <span class="c"># 规划与执行产出</span>
+    tool_plan: VoiceToolPlan | None      <span class="c"># 语音明确指令的本地规划</span>
+    tool_result: ToolCallResult | None   <span class="c"># 受控工具执行结果（含审计）</span>
+    <span class="c"># 模型产出</span>
+    response: AgentResponse | None       <span class="c"># 结构化响应（贯穿后处理）</span>
+    error: AgentProviderError | None     <span class="c"># 模型失败信息（驱动降级条件边）</span>
+</pre>
+</div>
+
+<h2>三、LangGraph 代码（Phase 1 · 接口不变替换内部实现）</h2>
+<div class="card">
+<pre>
+<span class="k">from</span> langgraph.graph <span class="k">import</span> StateGraph, START, END
+
+<span class="k">def</span> <span class="s">build_agent_graph</span>(service: AgentService):
+    g = StateGraph(AgentState)
+
+    g.add_node(<span class="s">"assemble_context"</span>,       service.assemble_context)       <span class="c"># 原 respond() 前半段</span>
+    g.add_node(<span class="s">"plan_voice_tool"</span>,        service.plan_voice_tool)        <span class="c"># 原 voice_tool_planner 调用</span>
+    g.add_node(<span class="s">"execute_controlled_tool"</span>, service.run_controlled_tool)   <span class="c"># 原 tool_service.execute</span>
+    g.add_node(<span class="s">"format_tool_response"</span>,   service.format_tool_response)  <span class="c"># 原 _voice_tool_response</span>
+    g.add_node(<span class="s">"call_remote_agent"</span>,       service.call_remote_agent)     <span class="c"># 原 OpenAiCompatibleAgent.respond</span>
+    g.add_node(<span class="s">"mock_agent"</span>,              service.mock_respond)          <span class="c"># 原 MockAgent.respond</span>
+    g.add_node(<span class="s">"mock_fallback"</span>,           service.mock_respond)          <span class="c"># 复用同一实现</span>
+    g.add_node(<span class="s">"raise_provider_error"</span>,    service.raise_provider_error)  <span class="c"># 原 _fallback_or_raise 的抛错分支</span>
+    g.add_node(<span class="s">"postprocess"</span>,             service.postprocess)           <span class="c"># 原 respond() 后半段</span>
+
+    g.add_edge(START, <span class="s">"assemble_context"</span>)
+    g.add_edge(<span class="s">"assemble_context"</span>, <span class="s">"plan_voice_tool"</span>)
+
+    <span class="c"># 条件边 ①：语音明确指令 / mock / 远程模型</span>
+    g.add_conditional_edges(<span class="s">"plan_voice_tool"</span>, route_input, {
+        <span class="s">"tool"</span>:  <span class="s">"execute_controlled_tool"</span>,
+        <span class="s">"mock"</span>:  <span class="s">"mock_agent"</span>,
+        <span class="s">"agent"</span>: <span class="s">"call_remote_agent"</span>,
+    })
+
+    <span class="c"># 条件边 ②：输出校验 → 通过 / 降级 / 抛错</span>
+    g.add_conditional_edges(<span class="s">"call_remote_agent"</span>, validate_output, {
+        <span class="s">"postprocess"</span>:    <span class="s">"postprocess"</span>,
+        <span class="s">"mock_fallback"</span>:  <span class="s">"mock_fallback"</span>,
+        <span class="s">"raise"</span>:          <span class="s">"raise_provider_error"</span>,
+    })
+
+    g.add_edge(<span class="s">"execute_controlled_tool"</span>, <span class="s">"format_tool_response"</span>)
+    g.add_edge(<span class="s">"format_tool_response"</span>, <span class="s">"postprocess"</span>)
+    g.add_edge(<span class="s">"mock_agent"</span>, <span class="s">"postprocess"</span>)
+    g.add_edge(<span class="s">"mock_fallback"</span>, <span class="s">"postprocess"</span>)
+    g.add_edge(<span class="s">"raise_provider_error"</span>, END)
+    g.add_edge(<span class="s">"postprocess"</span>, END)
+
+    <span class="k">return</span> g.compile()
+
+<span class="c"># ---- 条件边路由函数 ----</span>
+<span class="k">def</span> <span class="s">route_input</span>(state: AgentState) -> str:
+    <span class="k">if</span> state.get(<span class="s">"tool_plan"</span>) <span class="k">is not None</span>:
+        <span class="k">return</span> <span class="s">"tool"</span>                      <span class="c"># 明确指令直达受控工具（1 秒级，零 token）</span>
+    <span class="k">if</span> settings.agent_provider == <span class="s">"mock"</span>:
+        <span class="k">return</span> <span class="s">"mock"</span>
+    <span class="k">return</span> <span class="s">"agent"</span>
+
+<span class="k">def</span> <span class="s">validate_output</span>(state: AgentState) -> str:
+    <span class="k">if</span> state.get(<span class="s">"error"</span>) <span class="k">is None</span>:
+        <span class="k">return</span> <span class="s">"postprocess"</span>
+    <span class="k">if</span> settings.agent_fallback_to_mock <span class="k">and not</span> settings.agent_require_remote:
+        <span class="k">return</span> <span class="s">"mock_fallback"</span>
+    <span class="k">return</span> <span class="s">"raise"</span>
+
+<span class="c"># ---- AgentService 对外接口保持不变 ----</span>
+<span class="k">class</span> <span class="s">AgentService</span>:
+    <span class="k">def</span> <span class="s">__init__</span>(self, ...):
+        ...
+        self._graph = build_agent_graph(self)
+
+    <span class="k">async def</span> <span class="s">respond</span>(self, request: AgentRequest) -> AgentResponse:
+        state = {<span class="s">"request"</span>: request}
+        result = <span class="k">await</span> self._graph.ainvoke(state)
+        <span class="k">return</span> result[<span class="s">"response"</span>]          <span class="c"># 抛错分支在节点内 raise，行为与现状一致</span>
+</pre>
+</div>
+
+<h2>四、节点 ↔ 现有代码映射表（重构不发明新逻辑）</h2>
+<table>
+  <tr><th>LangGraph 节点</th><th>对应现有代码（backend/app/agent.py）</th></tr>
+  <tr><td>assemble_context</td><td><code>respond()</code> 开头：history / identity.snapshot / memory_store.context / persona_store.get_active / _retrieve_references</td></tr>
+  <tr><td>plan_voice_tool</td><td><code>plan_voice_tool()</code>（voice_tool_planner.py，纯正则）</td></tr>
+  <tr><td>execute_controlled_tool</td><td><code>tool_service.execute(plan.request, identity)</code></td></tr>
+  <tr><td>format_tool_response</td><td><code>_voice_tool_response()</code>（审计结果 → 多语言朗读响应）</td></tr>
+  <tr><td>call_remote_agent</td><td><code>OpenAiCompatibleAgent.respond()</code>（含 JSON Schema 请求体）</td></tr>
+  <tr><td>mock_agent / mock_fallback</td><td><code>MockAgent.respond()</code> / <code>_fallback_or_raise()</code></td></tr>
+  <tr><td>validate_output（条件边）</td><td><code>AgentModelOutput.model_validate</code> 的 ValidationError 分支</td></tr>
+  <tr><td>postprocess</td><td><code>respond()</code> 结尾：_with_rag_metadata / create_candidates / requires_confirmation / 语音动作纠正 / append_exchange</td></tr>
+</table>
+
+<h2>五、Phase 2：引入 LangGraph 原生能力（真正的增量价值）</h2>
+<div class="card">
+<p><b>1. 工具审批的人机协作（interrupt）</b> —— 中风险工具（如 open_file）不再是"生成审批单后异步等待"，而是工作流挂起：</p>
+<pre>
+<span class="k">from</span> langgraph.types <span class="k">import</span> interrupt
+
+<span class="k">def</span> <span class="s">execute_controlled_tool</span>(state: AgentState):
+    tool = state[<span class="s">"tool_plan"</span>].request
+    <span class="k">if</span> needs_manual_approval(tool):        <span class="c"># 中风险工具</span>
+        decision = interrupt({              <span class="c"># 图在此挂起，等待人工输入</span>
+            <span class="s">"tool"</span>: tool.tool_name,
+            <span class="s">"arguments"</span>: tool.arguments,
+            <span class="s">"timeout"</span>: <span class="s">"10min"</span>,
+        })
+        <span class="k">if</span> decision != <span class="s">"approved"</span>:
+            <span class="k">return</span> rejected_result(tool)    <span class="c"># 拒绝 → 走不悦动作分支</span>
+    <span class="k">return</span> tool_service.execute(tool, state[<span class="s">"identity"</span>])
+</pre>
+<p><b>2. checkpointer 检查点</b> —— 会话状态可持久化恢复（替换进程内 LRU 的同时保留短期记忆语义），网关重启不丢对话现场；</p>
+<p><b>3. astream_events 节点级事件流</b> —— 前端"阶段状态"面板从手写状态机升级为直接消费图的节点事件，天然对齐现有"等待→聆听→识别→提交→TTS→完成"的展示。</p>
+</div>
+
+<h2>六、迁移守则（风险控制）</h2>
+<table>
+  <tr><th>守则</th><th>说明</th></tr>
+  <tr><td>接口不变</td><td>FastAPI 路由、AgentResponse 模型、WebSocket 事件协议全部不动，仅替换 <code>AgentService.respond</code> 内部实现</td></tr>
+  <tr><td>测试安全网</td><td>143 个后端测试全绿才算完成；E2E 脚本（HTTP + WS + pet.action 广播）重新跑一遍</td></tr>
+  <tr><td>依赖控制</td><td>仅引入 <code>langgraph</code>（纯 Python，几 MB 级），不引入完整 langchain 全家桶；requirements.txt 锁版本并重新验证 PyInstaller 打包产物</td></tr>
+  <tr><td>行为对齐</td><td>迁移前后对同一组输入做响应 diff（文本/动作/记忆候选逐字段比对），确保无行为漂移</td></tr>
+</table>
+
+</div>
+</body>
+</html>

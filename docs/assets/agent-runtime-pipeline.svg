@@ -1,0 +1,56 @@
+<svg width="100%" viewBox="0 0 680 676" role="img" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', 'Microsoft YaHei', system-ui, sans-serif">
+<title>双引擎运行态：legacy 与 LangGraph</title>
+<desc>AgentService.respond 根据 AGENT_WORKFLOW_ENGINE 选择旧链路或 LangGraph 主图，两条路径共用 AgentResponse 契约、上下文服务与后处理语义。</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+<rect x="0" y="0" width="680" height="676" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.5"/>
+<text x="40" y="28" font-size="13" font-weight="500" fill="#1F2937">双引擎运行态：legacy 与 LangGraph</text>
+<text x="40" y="46" font-size="11" fill="#64748B">AgentService.respond 按 AGENT_WORKFLOW_ENGINE 选择；两条路径共用 AgentResponse 契约</text>
+
+<rect x="280" y="60" width="120" height="40" rx="8" fill="#F1F5F9" stroke="#94A3B8" stroke-width="0.5"/>
+<text x="340" y="80" font-size="11" fill="#334155" text-anchor="middle" dominant-baseline="central">AgentRequest</text>
+
+<rect x="250" y="130" width="180" height="56" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="340" y="148" font-size="12" font-weight="500" fill="#085041" text-anchor="middle" dominant-baseline="central">AgentService.respond</text>
+<text x="340" y="168" font-size="11" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">统一入口，不改变路由契约</text>
+
+<rect x="250" y="216" width="180" height="64" rx="10" fill="#FFFFFF" stroke="#0F6E56" stroke-width="0.5" stroke-dasharray="4 3"/>
+<text x="340" y="236" font-size="11" font-weight="500" fill="#085041" text-anchor="middle" dominant-baseline="central">工作流引擎选择</text>
+<text x="340" y="256" font-size="11" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">agent_workflow_engine</text>
+
+<rect x="50" y="330" width="250" height="110" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="66" y="350" font-size="12" font-weight="500" fill="#0C447C" dominant-baseline="central">legacy · _respond_legacy</text>
+<text x="66" y="372" font-size="11" fill="#185FA5" dominant-baseline="central">上下文 → RAG → 语音规划</text>
+<text x="66" y="390" font-size="11" fill="#185FA5" dominant-baseline="central">→ 工具 / Mock / 远程 → 后处理</text>
+<text x="66" y="408" font-size="11" fill="#185FA5" dominant-baseline="central">进程内会话，无图检查点</text>
+
+<rect x="380" y="330" width="250" height="110" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="396" y="350" font-size="12" font-weight="500" fill="#085041" dominant-baseline="central">langgraph · AgentWorkflowRunner</text>
+<text x="396" y="372" font-size="11" fill="#0F6E56" dominant-baseline="central">10 节点主图（图 2）</text>
+<text x="396" y="390" font-size="11" fill="#0F6E56" dominant-baseline="central">InMemory / SQLite checkpointer</text>
+<text x="396" y="408" font-size="11" fill="#0F6E56" dominant-baseline="central">thread_id = agent:{session_id}</text>
+
+<rect x="250" y="490" width="180" height="56" rx="10" fill="#F1F5F9" stroke="#94A3B8" stroke-width="0.5"/>
+<text x="340" y="508" font-size="12" font-weight="500" fill="#334155" text-anchor="middle" dominant-baseline="central">AgentResponse</text>
+<text x="340" y="528" font-size="11" fill="#475569" text-anchor="middle" dominant-baseline="central">统一响应契约</text>
+
+<rect x="220" y="570" width="240" height="56" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="340" y="588" font-size="12" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">下游消费</text>
+<text x="340" y="608" font-size="11" fill="#185FA5" text-anchor="middle" dominant-baseline="central">pet.action / TTS / 前端 UI</text>
+
+<text x="40" y="654" font-size="11" fill="#64748B">代码默认 legacy；.env.example 亦为 legacy；本机安装 .env 已设 langgraph + SQLite checkpoint + 审批中断。</text>
+
+<path d="M340 100 V130" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M340 186 V216" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M250 248 H175 V330" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M430 248 H505 V330" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M175 440 V466 H250 V490" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M505 440 V466 H430 V490" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M340 546 V570" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<text x="120" y="300" font-size="11" fill="#64748B">legacy（默认）</text>
+<text x="470" y="300" font-size="11" fill="#64748B">langgraph（本机启用）</text>
+</svg>

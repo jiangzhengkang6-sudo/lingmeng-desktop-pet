@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>灵梦桌宠项目介绍</title>
+<style>
+  :root {
+    --ink: #1f2430; --ink-soft: #4b5563; --muted: #8a93a5; --line: #e3e7ee;
+    --bg: #f7f8fb; --card: #ffffff; --accent: #3564e0; --accent-soft: #eaf0fd;
+    --green: #1f9d61; --green-soft: #e8f6ef; --orange: #c97a12; --orange-soft: #fdf3e3;
+    --purple: #7a4fd0; --purple-soft: #f1ebfc;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    font-size: 15px; line-height: 1.75; }
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 40px 28px 80px; }
+  header.hero { background: linear-gradient(135deg, #3564e0 0%, #6a4fd8 100%);
+    color: #fff; border-radius: 14px; padding: 36px 36px 30px; margin-bottom: 34px; }
+  header.hero h1 { margin: 0 0 6px; font-size: 27px; letter-spacing: .5px; }
+  header.hero p { margin: 4px 0; opacity: .92; font-size: 14px; }
+  .tags { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag { background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.35);
+    border-radius: 999px; padding: 3px 12px; font-size: 12.5px; }
+  h2 { font-size: 20px; margin: 42px 0 14px; padding-left: 12px;
+    border-left: 4px solid var(--accent); line-height: 1.4; }
+  h3 { font-size: 16px; margin: 24px 0 8px; }
+  p { margin: 8px 0; color: var(--ink-soft); }
+  strong { color: var(--ink); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 20px 24px; margin: 14px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; background: var(--card);
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden; font-size: 13.8px; }
+  th, td { padding: 9px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: var(--accent-soft); font-weight: 600; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  td code, p code, li code { background: #eef1f6; border-radius: 4px; padding: 1px 6px;
+    font-family: Consolas, "Courier New", monospace; font-size: 12.8px; color: #2b3a67; }
+  ul { margin: 6px 0; padding-left: 22px; color: var(--ink-soft); }
+  li { margin: 4px 0; }
+  .pill { display: inline-block; border-radius: 999px; padding: 1px 10px;
+    font-size: 12px; font-weight: 600; }
+  .pill.done { background: var(--green-soft); color: var(--green); }
+  .pill.wip { background: var(--orange-soft); color: var(--orange); }
+  .note { background: var(--accent-soft); border-left: 4px solid var(--accent);
+    border-radius: 8px; padding: 12px 16px; margin: 14px 0; font-size: 13.8px; color: #2b3a67; }
+  .diagram-card { background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 18px; margin: 16px 0; overflow-x: auto; }
+  .diagram-card figcaption { text-align: center; color: var(--muted); font-size: 13px; margin-top: 8px; }
+  footer { margin-top: 60px; color: var(--muted); font-size: 12.5px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>灵梦桌宠 · 二次元桌宠智能体</h1>
+  <p>版本 v0.4.0 ｜ Windows 桌面 AI 陪伴智能体 ｜ 文档生成日期：2026-10-12</p>
+  <p>由 Tauri 桌面前端、本地 FastAPI 网关、Godot 桌宠渲染器、云端语音/大模型服务、本地数据与受控工具体系组成的桌面智能伙伴。</p>
+  <div class="tags">
+    <span class="tag">Tauri v2 + Vue3 + TypeScript</span>
+    <span class="tag">Godot 4.7 渲染</span>
+    <span class="tag">FastAPI 本地网关</span>
+    <span class="tag">豆包流式 ASR</span>
+    <span class="tag">MiniMax TTS</span>
+    <span class="tag">Qwen / OpenAI 兼容 Agent</span>
+    <span class="tag">Milvus RAG</span>
+    <span class="tag">火山引擎 RTC 声纹</span>
+    <span class="tag">SQLite 本地数据</span>
+  </div>
+</header>
+
+<!-- ===================== 一、项目概述 ===================== -->
+<h2>一、项目概述</h2>
+<div class="card">
+  <p>本项目是一款运行在 Windows 桌面的<strong>二次元 AI 桌宠</strong>。它不是单一聊天机器人：用户可以通过文本或语音与桌宠对话，桌宠会根据语义切换聆听、思考、说话、不悦等动作；也可以让桌宠查询时间、打开白名单应用、检索授权目录文件、播放音乐、设置本地提醒，并在通过<strong>主人声纹验证</strong>后访问长期记忆等更高权限能力。</p>
+  <h3>五大设计原则</h3>
+  <ul>
+    <li><strong>人格稳定</strong> —— 角色语气、称呼、偏好与禁忌通过系统提示词与 Persona 配置保持一致。</li>
+    <li><strong>本地优先</strong> —— 配置、调试历史、工具审批、本地状态与密钥尽量保存在用户本机。</li>
+    <li><strong>权限受控</strong> —— 模型不能直接执行任意命令，工具必须走白名单、Schema 校验、审批与审计。</li>
+    <li><strong>链路可观测</strong> —— ASR、Agent、TTS、工具、RTC 身份等关键环节均有状态展示或本地历史记录。</li>
+    <li><strong>可替换服务</strong> —— 语音、模型、身份服务均通过本地网关适配，前端不绑定单一供应商。</li>
+  </ul>
+</div>
+
+<!-- ===================== 二、总体架构与流程图 ===================== -->
+<h2>二、项目总体流程图</h2>
+<p>系统采用「用户交互 → 桌面前端 → 本地网关 → 云端能力 / 本地数据」的分层架构。所有云端调用都经由本地 FastAPI 网关代理，密钥永不下发前端；桌宠渲染通过 <code>preview.json</code> 文件协议与 Tauri 解耦。</p>
+
+<figure class="diagram-card">
+<svg viewBox="0 0 960 640" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Microsoft YaHei, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a93a5"/>
+    </marker>
+  </defs>
+  <style>
+    .layer-label { font-size: 13px; font-weight: 700; fill: #6b7488; letter-spacing: 1px; }
+    .t { font-size: 13.5px; font-weight: 600; fill: #1f2430; }
+    .s { font-size: 11px; fill: #6b7488; }
+    .flow { stroke: #8a93a5; stroke-width: 1.5; fill: none; marker-end: url(#arrow); }
+  </style>
+
+  <!-- ① 用户交互层 -->
+  <text x="20" y="30" class="layer-label">① 用户交互层</text>
+  <rect x="20" y="40" width="920" height="72" fill="#f2f4f9" rx="10"/>
+  <rect x="60" y="54" width="200" height="44" fill="#ffffff" stroke="#c3cdda" rx="9" stroke-width="1.4"/>
+  <text x="160" y="72" text-anchor="middle" class="t">语音输入</text>
+  <text x="160" y="89" text-anchor="middle" class="s">唤醒词「小赤红」/ VAD 断句</text>
+  <rect x="380" y="54" width="200" height="44" fill="#ffffff" stroke="#c3cdda" rx="9" stroke-width="1.4"/>
+  <text x="480" y="72" text-anchor="middle" class="t">文本 / 控制台操作</text>
+  <text x="480" y="89" text-anchor="middle" class="s">对话·工具·记忆·RAG 面板</text>
+  <rect x="700" y="54" width="200" height="44" fill="#ffffff" stroke="#c3cdda" rx="9" stroke-width="1.4"/>
+  <text x="800" y="72" text-anchor="middle" class="t">桌宠视觉反馈</text>
+  <text x="800" y="89" text-anchor="middle" class="s">动作 + 口型 + 情绪</text>
+
+  <!-- ② 桌面前端层 -->
+  <text x="20" y="150" class="layer-label">② 桌面前端层</text>
+  <rect x="20" y="160" width="920" height="100" fill="#eaf0fd" rx="10"/>
+  <rect x="60" y="176" width="290" height="68" fill="#ffffff" stroke="#3564e0" rx="9" stroke-width="1.4"/>
+  <text x="205" y="200" text-anchor="middle" class="t">Tauri v2 桌面壳 + Vue 3 控制台</text>
+  <text x="205" y="218" text-anchor="middle" class="s">生命周期 · Godot 进程管理 · 调试历史</text>
+  <text x="205" y="234" text-anchor="middle" class="s">WebAudio 播放 · 口型能量同步</text>
+  <rect x="630" y="176" width="270" height="68" fill="#ffffff" stroke="#7a4fd0" rx="9" stroke-width="1.4"/>
+  <text x="765" y="200" text-anchor="middle" class="t">Godot 4.7 桌宠渲染器</text>
+  <text x="765" y="218" text-anchor="middle" class="s">透明窗口 · SpriteSheet 动作状态机</text>
+  <text x="765" y="234" text-anchor="middle" class="s">preview.json 轮询（动作/口型/尺寸）</text>
+  <line x1="350" y1="210" x2="630" y2="210" stroke="#8a93a5" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="490" y="202" text-anchor="middle" class="s">动作 / 口型协议</text>
+
+  <!-- ③ 本地网关层 -->
+  <text x="20" y="300" class="layer-label">③ 本地网关层（FastAPI · 密钥保管 · 安全中枢）</text>
+  <rect x="20" y="310" width="920" height="96" fill="#e8f6ef" rx="10"/>
+  <rect x="60" y="324" width="840" height="66" fill="#ffffff" stroke="#1f9d61" rx="9" stroke-width="1.4"/>
+  <text x="480" y="346" text-anchor="middle" class="t">FastAPI 本地网关（REST + WebSocket，PyInstaller 随 MSI 分发）</text>
+  <text x="480" y="365" text-anchor="middle" class="s">/api/agent/chat ｜ /api/speech/asr/stream ｜ /api/speech/tts ｜ /api/tools/* ｜ /api/identity/* ｜ /api/memories/* ｜ /api/rag/*</text>
+  <text x="480" y="381" text-anchor="middle" class="s">Pydantic Schema 校验 · 白名单与审批策略 · 审计记录 · 供应商适配与降级</text>
+
+  <!-- ④ 云端能力层 -->
+  <text x="20" y="446" class="layer-label">④ 云端能力层（全部经网关代理，密钥仅存服务端 .env）</text>
+  <rect x="20" y="456" width="920" height="84" fill="#fdf3e3" rx="10"/>
+  <rect x="45" y="470" width="205" height="54" fill="#ffffff" stroke="#c97a12" rx="9" stroke-width="1.4"/>
+  <text x="147" y="492" text-anchor="middle" class="t">豆包 SAUC 流式 ASR</text>
+  <text x="147" y="510" text-anchor="middle" class="s">中 / 日 / 英 实时识别</text>
+  <rect x="270" y="470" width="205" height="54" fill="#ffffff" stroke="#c97a12" rx="9" stroke-width="1.4"/>
+  <text x="372" y="492" text-anchor="middle" class="t">MiniMax TTS</text>
+  <text x="372" y="510" text-anchor="middle" class="s">多语言 · 多角色音色</text>
+  <rect x="495" y="470" width="215" height="54" fill="#ffffff" stroke="#c97a12" rx="9" stroke-width="1.4"/>
+  <text x="602" y="492" text-anchor="middle" class="t">Qwen / OpenAI 兼容 Agent</text>
+  <text x="602" y="510" text-anchor="middle" class="s">JSON Schema 结构化输出</text>
+  <rect x="730" y="470" width="185" height="54" fill="#ffffff" stroke="#c97a12" rx="9" stroke-width="1.4"/>
+  <text x="822" y="492" text-anchor="middle" class="t">火山引擎 RTC 声纹</text>
+  <text x="822" y="510" text-anchor="middle" class="s">StartVoiceChat · RTS 回调</text>
+
+  <!-- ⑤ 本地数据层 -->
+  <text x="20" y="580" class="layer-label">⑤ 本地数据层</text>
+  <rect x="20" y="590" width="920" height="44" fill="#f1ebfc" rx="10"/>
+  <rect x="45" y="600" width="275" height="26" fill="#ffffff" stroke="#7a4fd0" rx="8" stroke-width="1.3"/>
+  <text x="182" y="617" text-anchor="middle" class="s" font-size="12">SQLite：工具审批 / 审计 / 提醒 / 记忆</text>
+  <rect x="345" y="600" width="275" height="26" fill="#ffffff" stroke="#7a4fd0" rx="8" stroke-width="1.3"/>
+  <text x="482" y="617" text-anchor="middle" class="s" font-size="12">Milvus：RAG 知识库（角色知识 / 用户文档）</text>
+  <rect x="645" y="600" width="270" height="26" fill="#ffffff" stroke="#7a4fd0" rx="8" stroke-width="1.3"/>
+  <text x="780" y="617" text-anchor="middle" class="s" font-size="12">localStorage：调试历史 · .env：密钥</text>
+
+  <!-- 层间箭头 -->
+  <line x1="160" y1="98" x2="160" y2="176" class="flow"/>
+  <line x1="480" y1="98" x2="480" y2="176" class="flow"/>
+  <line x1="800" y1="176" x2="800" y2="98" class="flow"/>
+  <line x1="205" y1="244" x2="205" y2="324" class="flow"/>
+  <line x1="480" y1="406" x2="480" y2="470" class="flow"/>
+  <line x1="700" y1="470" x2="700" y2="406" class="flow"/>
+  <line x1="300" y1="390" x2="300" y2="600" class="flow"/>
+</svg>
+<figcaption>图 1 · 项目总体架构与数据流：前端不直连云端，一切经本地网关；桌宠渲染与控制台通过文件协议解耦</figcaption>
+</figure>
+
+<h3>一次语音对话的端到端流程</h3>
+<figure class="diagram-card">
+<svg viewBox="0 0 960 130" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Microsoft YaHei, sans-serif">
+  <defs>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3564e0"/>
+    </marker>
+  </defs>
+  <g font-size="12.5" font-weight="600" fill="#1f2430">
+    <rect x="10"  y="40" width="105" height="50" fill="#eaf0fd" stroke="#3564e0" rx="9"/><text x="62"  y="62" text-anchor="middle">麦克风采集</text><text x="62" y="79" text-anchor="middle" font-size="10.5" fill="#6b7488" font-weight="400">16kHz PCM</text>
+    <rect x="145" y="40" width="105" height="50" fill="#eaf0fd" stroke="#3564e0" rx="9"/><text x="197" y="62" text-anchor="middle">唤醒词/VAD</text><text x="197" y="79" text-anchor="middle" font-size="10.5" fill="#6b7488" font-weight="400">本地文本门控</text>
+    <rect x="280" y="40" width="105" height="50" fill="#fdf3e3" stroke="#c97a12" rx="9"/><text x="332" y="62" text-anchor="middle">豆包 ASR</text><text x="332" y="79" text-anchor="middle" font-size="10.5" fill="#6b7488" font-weight="400">流式转写</text>
+    <rect x="415" y="40" width="105" height="50" fill="#e8f6ef" stroke="#1f9d61" rx="9"/><text x="467" y="62" text-anchor="middle">意图/工具规划</text><text x="467" y="79" text-anchor="middle" font-size="10.5" fill="#6b7488" font-weight="400">本地确定性规则</text>
+    <rect x="550" y="40" width="105" height="50" fill="#e8f6ef" stroke="#1f9d61" rx="9"/><text x="602" y="62" text-anchor="middle">Agent 生成</text><text x="602" y="79" text-anchor="middle" font-size="10.5" fill="#6b7488" font-weight="400">结构化 JSON</text>
+    <rect x="685" y="40" width="105" height="50" fill="#fdf3e3" stroke="#c97a12" rx="9"/><text x="737" y="62" text-anchor="middle">MiniMax TTS</text><text x="737" y="79" text-anchor="middle" font-size="10.5" fill="#6b7488" font-weight="400">音频合成</text>
+    <rect x="820" y="40" width="130" height="50" fill="#f1ebfc" stroke="#7a4fd0" rx="9"/><text x="885" y="62" text-anchor="middle">桌宠动作+口型</text><text x="885" y="79" text-anchor="middle" font-size="10.5" fill="#6b7488" font-weight="400">speaking / lip-sync</text>
+    <line x1="115" y1="65" x2="145" y2="65" stroke="#3564e0" stroke-width="1.6" marker-end="url(#arrow2)"/>
+    <line x1="250" y1="65" x2="280" y2="65" stroke="#3564e0" stroke-width="1.6" marker-end="url(#arrow2)"/>
+    <line x1="385" y1="65" x2="415" y2="65" stroke="#3564e0" stroke-width="1.6" marker-end="url(#arrow2)"/>
+    <line x1="520" y1="65" x2="550" y2="65" stroke="#3564e0" stroke-width="1.6" marker-end="url(#arrow2)"/>
+    <line x1="655" y1="65" x2="685" y2="65" stroke="#3564e0" stroke-width="1.6" marker-end="url(#arrow2)"/>
+    <line x1="790" y1="65" x2="820" y2="65" stroke="#3564e0" stroke-width="1.6" marker-end="url(#arrow2)"/>
+  </g>
+</svg>
+<figcaption>图 2 · 语音链路：录音 → 唤醒门控 → ASR → 工具规划 → Agent → TTS → 动作/口型同步（文本链路跳过前三步直达 Agent）</figcaption>
+</figure>
+
+<!-- ===================== 三、核心功能说明 ===================== -->
+<h2>三、核心功能说明</h2>
+<table>
+  <tr><th style="width:150px">功能模块</th><th>说明</th><th style="width:90px">状态</th></tr>
+  <tr>
+    <td><strong>桌宠显示与动作</strong></td>
+    <td>Godot 4.7 透明桌面窗口，SpriteSheet 按 manifest 切帧循环播放；支持待机、聆听、思考、说话、不悦、害羞、打开应用等动作；口型随 TTS 能量切换 closed / half-open / open；缺资源时回退 Canvas 占位动画。Tauri 与 Godot 通过 <code>preview.json</code> 同步动作与口型。</td>
+    <td><span class="pill done">已完成</span></td>
+  </tr>
+  <tr>
+    <td><strong>文本对话 Agent</strong></td>
+    <td>支持中、日、英多轮对话；远程模型经 JSON Schema 强约束输出文本、情绪、动作、口型与记忆候选；本地维护有界短期会话上下文（默认 6 轮）；时间类问题走本地工具实现秒级响应；远程失败可降级到本地 Mock，绝不伪装成功。</td>
+    <td><span class="pill done">已完成</span></td>
+  </tr>
+  <tr>
+    <td><strong>语音识别（ASR）</strong></td>
+    <td>豆包 SAUC WebSocket 流式识别，16 kHz 16-bit 单声道 PCM；支持连续对话与手动录音，VAD 自动断句，partial / final 事件区分；中、日、英三语实测通过。</td>
+    <td><span class="pill done">已完成</span></td>
+  </tr>
+  <tr>
+    <td><strong>语音合成（TTS）</strong></td>
+    <td>MiniMax TTS，中文傲娇/温柔/御姐、日语、英语等多音色；WebAudio 播放并同步桌宠说话动作与口型，HTMLAudio 兜底。</td>
+    <td><span class="pill done">已完成</span></td>
+  </tr>
+  <tr>
+    <td><strong>连续对话</strong></td>
+    <td>默认唤醒词「小赤红」（仅本地文本门控，不等同主人认证）；识别 final 后进入 Agent，Agent/TTS 期间防重复提交；阶段状态全程可见。</td>
+    <td><span class="pill done">已完成</span></td>
+  </tr>
+  <tr>
+    <td><strong>受控工具与权限</strong></td>
+    <td>四层安全边界：前端只调网关 → 网关 Pydantic 校验 → 白名单与审批策略 → 执行写审计。工具清单：<code>get_time</code>（低风险）、<code>search_files</code>（限授权目录）、<code>open_application</code>（限登记应用）、<code>control_music</code>、<code>open_file</code>（中风险，需 10 分钟内人工审批）。高风险工具默认关闭。</td>
+    <td><span class="pill done">基础完成</span></td>
+  </tr>
+  <tr>
+    <td><strong>用户确认记忆</strong></td>
+    <td>本地 SQLite 存储记忆候选，用户在调试界面显式确认后才生效；确认条目作为事实性上下文提供给 Agent（默认 12 条）；敏感内容（密钥、卡号、证件号等）在入库前被拒绝。</td>
+    <td><span class="pill done">基础完成</span></td>
+  </tr>
+  <tr>
+    <td><strong>RAG 知识库</strong></td>
+    <td>Milvus 双集合 <code>character_knowledge</code> / <code>user_documents</code>；检索 top-3 作为「不可信参考资料」注入提示词；RAG 缺失或不可用不阻断聊天，仅返回 <code>rag_status</code> 标记。</td>
+    <td><span class="pill done">基础完成</span></td>
+  </tr>
+  <tr>
+    <td><strong>RTC 声纹身份</strong></td>
+    <td>火山引擎 AI 音视频互动：RegisterVoicePrint 注册主人样本、StartVoiceChat 会话控制、RTS 服务端回调验签解析、官方 Web SDK 入房发布麦克风；声纹 + 分数阈值 + 活动任务校验通过后才升级为 <code>owner_verified</code>。</td>
+    <td><span class="pill wip">联调中</span></td>
+  </tr>
+  <tr>
+    <td><strong>本地提醒与调试历史</strong></td>
+    <td>一次性提醒存 SQLite，到期仅派发提醒事件（绝不启动应用/执行命令）；ASR/Agent/TTS/工具各阶段历史存 localStorage，重启后可查、可清空。</td>
+    <td><span class="pill done">已完成</span></td>
+  </tr>
+  <tr>
+    <td><strong>打包发布</strong></td>
+    <td>PyInstaller 打包 Python 网关 + Vite 构建前端 + Tauri 生成 NSIS 安装包；运行配置位于用户目录 <code>%LOCALAPPDATA%\LingMengDesktopPet</code>，升级不覆盖用户密钥。</td>
+    <td><span class="pill done">已完成</span></td>
+  </tr>
+</table>
+
+<div class="note"><strong>测试基线：</strong>前端 Vitest 34 个测试文件 / 120 个测试通过；后端 Pytest 143 个测试通过；MSI 安装包可安装、启动并通过 <code>/api/health</code>；ASR / TTS 均已用真实云端接口完成闭环验收。</div>
+
+<!-- ===================== 四、智能体的作用 ===================== -->
+<h2>四、智能体在整个项目中的作用</h2>
+<div class="card">
+  <p>智能体是整个桌宠的<strong>「大脑 + 调度中枢」</strong>：它向上承接用户的文本/语音输入，向下驱动 TTS 播报、桌宠动作、口型、受控工具与记忆系统。其职责可以拆成六个方面：</p>
+  <ul>
+    <li><strong>多语言对话理解与生成</strong> —— 接收会话历史、确认记忆、RAG 参考资料、Persona 人设块，用 Qwen / OpenAI 兼容接口生成回复；回复不是自由文本，而是被 JSON Schema 严格约束的结构化对象 <code>{ text, language, emotion, action_id, mouth_mode, requires_confirmation, memory_candidates }</code>。</li>
+    <li><strong>驱动桌宠「表演」</strong> —— <code>action_id</code> 与 <code>mouth_mode</code> 直接映射到 Godot 动作状态机（speaking / thinking / displeased…）与口型开合，让回答与表情、口型同步。模型只能从白名单枚举中选择动作，不能越界。</li>
+    <li><strong>工具意图规划</strong> —— 语音链路上由本地确定性规划器（<code>voice_tool_planner</code>，纯正则规则、不调用大模型）把「现在几点」「打开记事本」「播放音乐」等明确指令映射到受控工具；参数仍要过身份校验、白名单、审批与审计四道关。文本链路则按配置走远程 Agent 或本地规划。</li>
+    <li><strong>记忆候选提出者</strong> —— 当用户说出稳定事实或偏好时，Agent 最多提出 3 条记忆候选，但<strong>永不自动保存</strong>，必须经用户在界面上确认；身份未验证（非主人）时记忆读写整体关闭。</li>
+    <li><strong>RAG 融合与来源呈现</strong> —— 可选地从 Milvus 检索 top-3 片段，以「不可信参考资料」标记注入提示词（防止资料中的指令注入），回复携带 <code>sources</code> 与 <code>rag_status</code> 供前端展示。</li>
+    <li><strong>可靠性兜底</strong> —— 远程模型超时、返回非法结构或网络故障时，按配置降级到本地 Mock Agent 或直接报错，不伪装成功；网关还会在语音场景下纠正动作（idle → speaking），保证桌宠状态与语音播放一致。</li>
+  </ul>
+  <p style="margin-top:12px"><strong>安全定位：</strong>智能体本身没有执行权。它能做的只有「说话 + 选择白名单内的动作枚举 + 提议记忆候选」；一切桌面操作都由网关侧的受控工具服务在身份、白名单、审批、审计约束下代为执行。这保证了「模型可被替换、权限不可被绕过」。</p>
+</div>
+
+<!-- ===================== 五、LangGraph 流程图 ===================== -->
+<h2>五、Agent 编排的 LangGraph 流程图</h2>
+<div class="note">
+  <strong>说明：</strong>当前代码库中 Agent 编排由自研管线（<code>backend/app/agent.py · AgentService.respond</code>）实现，尚未引入 LangGraph 依赖。下图是把这条真实管线的节点、状态与条件分支<strong>用 LangGraph StateGraph 语义等价表达</strong>的结果，同时也可作为后续迁移到 LangGraph 的目标蓝图（State: <code>messages / identity / memories / persona / references / tool_plan / response</code>）。
+</div>
+
+<figure class="diagram-card">
+<svg viewBox="0 0 960 560" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Microsoft YaHei, sans-serif">
+  <defs>
+    <marker id="arrow3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5b6478"/>
+    </marker>
+  </defs>
+  <style>
+    .node { fill: #ffffff; stroke-width: 1.5; }
+    .nt { font-size: 13px; font-weight: 600; fill: #1f2430; }
+    .ns { font-size: 10.5px; fill: #6b7488; }
+    .e  { stroke: #5b6478; stroke-width: 1.5; fill: none; marker-end: url(#arrow3); }
+    .lbl { font-size: 11px; fill: #3564e0; font-weight: 600; }
+  </style>
+
+  <!-- START -->
+  <circle cx="60" cy="90" r="22" fill="#3564e0"/>
+  <text x="60" y="95" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">START</text>
+
+  <!-- assemble_context -->
+  <rect x="130" y="55" width="180" height="70" class="node" stroke="#3564e0" rx="10"/>
+  <text x="220" y="80" text-anchor="middle" class="nt">assemble_context</text>
+  <text x="220" y="98" text-anchor="middle" class="ns">会话历史 · 身份快照 · Persona</text>
+  <text x="220" y="113" text-anchor="middle" class="ns">确认记忆(仅owner) · RAG top-3</text>
+  <line x1="82" y1="90" x2="130" y2="90" class="e"/>
+
+  <!-- plan_voice_tool 条件 -->
+  <polygon points="420,90 380,125 460,125" fill="#fdf3e3" stroke="#c97a12" stroke-width="1.4" transform="translate(0,-35)"/>
+  <polygon points="420,55 380,90 460,90" fill="#fdf3e3" stroke="#c97a12" stroke-width="1.4"/>
+  <text x="420" y="82" text-anchor="middle" class="nt" font-size="12">语音明确指令?</text>
+  <line x1="310" y1="90" x2="378" y2="90" class="e"/>
+
+  <!-- execute_controlled_tool -->
+  <rect x="500" y="20" width="200" height="70" class="node" stroke="#1f9d61" rx="10"/>
+  <text x="600" y="45" text-anchor="middle" class="nt">execute_controlled_tool</text>
+  <text x="600" y="63" text-anchor="middle" class="ns">get_time / open_application</text>
+  <text x="600" y="78" text-anchor="middle" class="ns">control_music（白名单+审计）</text>
+  <line x1="462" y1="72" x2="500" y2="58" class="e"/>
+  <text x="468" y="52" class="lbl">yes</text>
+
+  <!-- call_remote_agent -->
+  <rect x="500" y="140" width="200" height="76" class="node" stroke="#3564e0" rx="10"/>
+  <text x="600" y="166" text-anchor="middle" class="nt">call_remote_agent</text>
+  <text x="600" y="184" text-anchor="middle" class="ns">Qwen / OpenAI 兼容接口</text>
+  <text x="600" y="200" text-anchor="middle" class="ns">JSON Schema 严格结构化输出</text>
+  <line x1="462" y1="108" x2="500" y2="140" class="e"/>
+  <text x="468" y="132" class="lbl">no / 文本输入</text>
+
+  <!-- validate_output 条件 -->
+  <polygon points="600,286 556,250 644,250" fill="#eaf0fd" stroke="#3564e0" stroke-width="1.4"/>
+  <text x="600" y="272" text-anchor="middle" class="nt" font-size="12">输出合法?</text>
+  <line x1="600" y1="216" x2="600" y2="250" class="e"/>
+
+  <!-- mock_fallback -->
+  <rect x="270" y="310" width="190" height="66" class="node" stroke="#c97a12" rx="10"/>
+  <text x="365" y="336" text-anchor="middle" class="nt">mock_fallback</text>
+  <text x="365" y="354" text-anchor="middle" class="ns">本地 Mock Agent</text>
+  <text x="365" y="369" text-anchor="middle" class="ns">（需 fallback_to_mock=true）</text>
+  <line x1="560" y1="278" x2="460" y2="322" class="e"/>
+  <text x="500" y="290" class="lbl" fill="#c97a12">no（超时/非法结构）</text>
+
+  <!-- postprocess -->
+  <rect x="530" y="360" width="210" height="80" class="node" stroke="#7a4fd0" rx="10"/>
+  <text x="635" y="386" text-anchor="middle" class="nt">postprocess</text>
+  <text x="635" y="404" text-anchor="middle" class="ns">记忆候选落库(仅owner,需确认)</text>
+  <text x="635" y="419" text-anchor="middle" class="ns">附加 RAG sources · 语音动作纠正</text>
+  <text x="635" y="434" text-anchor="middle" class="ns">写回会话记忆</text>
+  <line x1="600" y1="322" x2="600" y2="360" class="e"/>
+  <text x="612" y="344" class="lbl" fill="#1f9d61">yes</text>
+  <line x1="460" y1="352" x2="530" y2="378" class="e"/>
+  <line x1="700" y1="90" x2="760" y2="90" class="e"/>
+  <path d="M 760 90 L 760 250 L 644 250" class="e"/>
+  <text x="770" y="160" class="ns" transform="rotate(90 770 160)"> 工具结果 → 可朗读响应</text>
+
+  <!-- END -->
+  <circle cx="890" cy="400" r="22" fill="#1f2430"/>
+  <text x="890" y="405" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">END</text>
+  <line x1="740" y1="400" x2="868" y2="400" class="e"/>
+
+  <text x="20" y="520" font-size="11.5" fill="#8a93a5">条件边（conditional edges）：① plan_voice_tool → [yes: execute_controlled_tool | no: call_remote_agent]　② validate_output → [yes: postprocess | no: mock_fallback]</text>
+</svg>
+<figcaption>图 3 · Agent 编排管线的 LangGraph StateGraph 等价表达（含条件边与降级回路）</figcaption>
+</figure>
+
+<h3>LangGraph 伪代码（迁移蓝图）</h3>
+<div class="card">
+<pre style="margin:0; font-size:13px; line-height:1.7; color:#2b3a67; font-family:Consolas,monospace; overflow-x:auto;">from langgraph.graph import StateGraph, START, END
+
+class PetState(TypedDict):
+    request: dict            # message / language / session_id / source
+    history: list            # 会话短期上下文
+    identity: str            # unknown / guest / owner_verified
+    memories: list           # 已确认记忆（仅 owner）
+    persona: dict | None     # 人设配置
+    references: list         # RAG 检索片段
+    tool_plan: dict | None   # 语音工具规划结果
+    response: dict           # 结构化 AgentResponse
+
+g = StateGraph(PetState)
+g.add_node("assemble_context",       assemble_context)      # 历史/身份/人设/记忆/RAG
+g.add_node("execute_controlled_tool", execute_controlled_tool)
+g.add_node("call_remote_agent",      call_remote_agent)     # JSON Schema 结构化输出
+g.add_node("mock_fallback",          mock_fallback)
+g.add_node("postprocess",            postprocess)           # 记忆候选/动作纠正/写回上下文
+
+g.add_edge(START, "assemble_context")
+g.add_conditional_edges("assemble_context", route_voice_tool,
+    {"tool": "execute_controlled_tool", "agent": "call_remote_agent"})
+g.add_conditional_edges("call_remote_agent", validate_output,
+    {"ok": "postprocess", "fail": "mock_fallback"})
+g.add_edge("mock_fallback", "postprocess")
+g.add_edge("execute_controlled_tool", "postprocess")
+g.add_edge("postprocess", END)
+
+app = g.compile()</pre>
+</div>
+
+<!-- ===================== 六、技术栈与里程碑 ===================== -->
+<h2>六、技术栈与里程碑</h2>
+<table>
+  <tr><th style="width:130px">层次</th><th>技术选型</th></tr>
+  <tr><td>桌面前端</td><td>Tauri v2（Rust 壳）、Vue 3 + TypeScript + Vite、@volcengine/rtc Web SDK、localStorage</td></tr>
+  <tr><td>桌宠渲染</td><td>Godot 4.7、SpriteSheet + manifest 切帧、preview.json 文件协议</td></tr>
+  <tr><td>本地网关</td><td>Python FastAPI（REST + WebSocket）、Pydantic、PyInstaller、httpx</td></tr>
+  <tr><td>云端能力</td><td>豆包 SAUC 流式 ASR、MiniMax TTS、Qwen / OpenAI 兼容 Chat、火山引擎 RTC + RTS 回调</td></tr>
+  <tr><td>数据与检索</td><td>SQLite（工具审批/审计/提醒/记忆）、Milvus RAG（hash / OpenAI 兼容 embedding）</td></tr>
+  <tr><td>质量保障</td><td>Vitest（前端 120 测试）、Pytest（后端 143 测试）、Agent+RAG E2E 非破坏性验收脚本</td></tr>
+</table>
+
+<table>
+  <tr><th style="width:220px">里程碑</th><th>内容</th><th style="width:90px">状态</th></tr>
+  <tr><td>M1 桌面与角色基础</td><td>Tauri 应用、Godot 窗口、SpriteSheet、动作切换、preview.json</td><td><span class="pill done">已完成</span></td></tr>
+  <tr><td>M2 网关与语音闭环</td><td>FastAPI、豆包 ASR、MiniMax TTS、Qwen Agent、健康检查</td><td><span class="pill done">已完成</span></td></tr>
+  <tr><td>M3 工具、记忆与调试</td><td>get_time、受控工具框架、提醒、调试历史、记忆候选</td><td><span class="pill done">基础完成</span></td></tr>
+  <tr><td>M4 RTC 主人身份</td><td>声纹注册、StartVoiceChat、RTS 回调、官方 SDK 入房、身份提升</td><td><span class="pill wip">进行中</span></td></tr>
+  <tr><td>M5 发布体验优化</td><td>安装配置向导、供应商配置检查、错误诊断、权限引导、onboarding</td><td><span class="pill wip">规划中</span></td></tr>
+</table>
+
+<footer>灵梦桌宠项目介绍 · 依据 PRD v0.4 与 backend/app 源码整理 · 2026-10-12</footer>
+</div>
+</body>
+</html>

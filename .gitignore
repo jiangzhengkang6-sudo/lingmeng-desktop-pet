@@ -14,6 +14,15 @@ dist
 dist-ssr
 *.local
 
+# Tauri build output
+src-tauri/target
+src-tauri/.tauri-target
+src-tauri/.tauri-target-user
+src-tauri/gen
+
+# Local release artifacts
+release/
+
 # 编辑器 / 系统文件
 .vscode/*
 !.vscode/extensions.json
@@ -30,3 +39,60 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+!.env.frontend.example
+
+# Python and tool caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local confirmed-memory database
+backend/data/
+backend/build/
+backend/dist/
+backend/*.spec
+# 但网关唯一打包入口 spec 必须入库
+!backend/desktop-pet-gateway.spec
+
+# 人脸模型是大型二进制，通过 scripts/download_face_models.py 获取，不入库
+backend/models/*.onnx
+backend/models/*.task
+!backend/models/README.md
+
+# Local RTC voiceprint task scene. It can contain provider-side AI settings.
+backend/config/voiceprint-rtc-scene.json
+
+# Project-local portable engine
+tools/godot/
+
+# Godot editor/import cache
+godot/**/.godot/
+
+# Project-local Cloudflare Tunnel binary
+tools/cloudflared.exe
+
+# 本地阶段备份
+backups/
+
+# 开源前清理：安装日志、临时导出、运行缓存与历史副本
+msi-install-*.log
+ppt-work/
+ppt-content-dump.txt
+ppt-enriched-dump.txt
+ppt-text-readable.txt
+runtime/
+.workbuddy/
+voiceprint-archive/
+godot-test-result.png
+godot-test-window-crop.png
+godot-transparent-test.png
+
+# 第三方命令行工具包和可执行文件，不进入源码仓库
+scripts/*.tgz
+scripts/rtc-cli-inspect/bin/
+scripts/rtc-cli-inspect/package/artifacts/
+
+# 历史整理副本，避免误开源或造成仓库臃肿
+项目源码整理/

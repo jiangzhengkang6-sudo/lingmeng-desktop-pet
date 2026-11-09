@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "name": "testing-multi-sheet",
+  "version": "0.1.0",
+  "canvas": {
+    "width": 720,
+    "height": 720,
+    "background": "transparent"
+  },
+  "sprite_sheets": {
+    "idle-sheet": {
+      "file": "idle-spritesheet-test.png",
+      "width": 3600,
+      "height": 3600,
+      "frame_width": 720,
+      "frame_height": 720,
+      "columns": 5,
+      "rows": 5,
+      "frame_count": 25,
+      "valid_frame_indices": [0, 1, 2, 3],
+      "blank_frame_indices": [24],
+      "anchor": "bottom-center"
+    },
+    "speaking-sheet": {
+      "file": "idle-spritesheet-test.png",
+      "width": 3600,
+      "height": 3600,
+      "frame_width": 720,
+      "frame_height": 720,
+      "columns": 5,
+      "rows": 5,
+      "frame_count": 25,
+      "valid_frame_indices": [12, 13, 14, 15],
+      "blank_frame_indices": [24],
+      "anchor": "center"
+    }
+  },
+  "actions": {
+    "idle": {
+      "id": "idle",
+      "label": "测试待机",
+      "sheet": "idle-sheet",
+      "frame_indices": [0, 1, 2, 3],
+      "fps": 8,
+      "loop": true,
+      "interruptible": true,
+      "anchor": "bottom-center"
+    },
+    "speaking": {
+      "id": "speaking",
+      "label": "测试说话",
+      "sheet": "speaking-sheet",
+      "frame_indices": [12, 13, 14, 15],
+      "fps": 12,
+      "loop": true,
+      "interruptible": true,
+      "anchor": "center"
+    }
+  }
+}

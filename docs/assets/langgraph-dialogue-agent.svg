@@ -1,0 +1,98 @@
+<svg width="100%" viewBox="0 0 680 800" role="img" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', 'Microsoft YaHei', system-ui, sans-serif">
+<title>对话智能体 LangGraph 主图</title>
+<desc>AGENT_WORKFLOW_ENGINE=langgraph 时启用：上下文组装、本地规划后按条件边分为执行受控工具、本地模拟应答、调用远程模型和提供方不可用四条路径，最终汇合到后处理或显式报错。</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+<rect x="0" y="0" width="680" height="800" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.5"/>
+<text x="40" y="28" font-size="13" font-weight="500" fill="#1F2937">对话智能体 · LangGraph 主图</text>
+<text x="40" y="46" font-size="11" fill="#64748B">10 个节点 / 3 条条件边；AGENT_WORKFLOW_ENGINE=langgraph 时启用，节点复用现有服务</text>
+<rect x="520" y="58" width="120" height="32" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="580" y="74" font-size="11" fill="#085041" text-anchor="middle" dominant-baseline="central">运行态 · 可切换</text>
+
+<rect x="300" y="58" width="80" height="36" rx="18" fill="#F1F5F9" stroke="#94A3B8" stroke-width="0.5"/>
+<text x="340" y="76" font-size="11" fill="#334155" text-anchor="middle" dominant-baseline="central">START</text>
+
+<rect x="240" y="120" width="200" height="56" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="340" y="138" font-size="12" font-weight="500" fill="#085041" text-anchor="middle" dominant-baseline="central">上下文组装</text>
+<text x="340" y="158" font-size="11" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">历史 · 身份 · 记忆 · 人设 · RAG</text>
+
+<rect x="240" y="200" width="200" height="56" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="340" y="218" font-size="12" font-weight="500" fill="#085041" text-anchor="middle" dominant-baseline="central">本地规划</text>
+<text x="340" y="238" font-size="11" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">只认明确语音指令</text>
+
+<rect x="250" y="284" width="180" height="64" rx="10" fill="#FFFFFF" stroke="#0F6E56" stroke-width="0.5" stroke-dasharray="4 3"/>
+<text x="340" y="304" font-size="11" font-weight="500" fill="#085041" text-anchor="middle" dominant-baseline="central">输入路由（条件边）</text>
+<text x="340" y="324" font-size="11" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">工具 / Mock / 远程</text>
+
+<rect x="20" y="378" width="140" height="56" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="90" y="396" font-size="12" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">执行受控工具</text>
+<text x="90" y="416" font-size="11" fill="#185FA5" text-anchor="middle" dominant-baseline="central">白名单/审批/审计</text>
+
+<rect x="180" y="378" width="140" height="56" rx="10" fill="#F1F5F9" stroke="#94A3B8" stroke-width="0.5"/>
+<text x="250" y="396" font-size="12" font-weight="500" fill="#334155" text-anchor="middle" dominant-baseline="central">本地模拟应答</text>
+<text x="250" y="416" font-size="11" fill="#475569" text-anchor="middle" dominant-baseline="central">MockAgent</text>
+
+<rect x="340" y="378" width="140" height="56" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="410" y="396" font-size="12" font-weight="500" fill="#085041" text-anchor="middle" dominant-baseline="central">调用远程模型</text>
+<text x="410" y="416" font-size="11" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">JSON Schema</text>
+
+<rect x="500" y="378" width="150" height="56" rx="10" fill="#F1F5F9" stroke="#94A3B8" stroke-width="0.5"/>
+<text x="575" y="396" font-size="12" font-weight="500" fill="#334155" text-anchor="middle" dominant-baseline="central">提供方不可用</text>
+<text x="575" y="416" font-size="11" fill="#475569" text-anchor="middle" dominant-baseline="central">provider 不在枚举</text>
+
+<rect x="20" y="458" width="140" height="56" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+<text x="90" y="476" font-size="12" font-weight="500" fill="#0C447C" text-anchor="middle" dominant-baseline="central">格式化工具回复</text>
+<text x="90" y="496" font-size="11" fill="#185FA5" text-anchor="middle" dominant-baseline="central">话术 + 动作 + 口型</text>
+
+<rect x="330" y="444" width="170" height="60" rx="10" fill="#FFFFFF" stroke="#0F6E56" stroke-width="0.5" stroke-dasharray="4 3"/>
+<text x="415" y="464" font-size="11" font-weight="500" fill="#085041" text-anchor="middle" dominant-baseline="central">远程结果路由</text>
+<text x="415" y="484" font-size="11" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">成功 / 降级 / 报错</text>
+
+<rect x="510" y="444" width="130" height="60" rx="10" fill="#FFFFFF" stroke="#0F6E56" stroke-width="0.5" stroke-dasharray="4 3"/>
+<text x="575" y="464" font-size="11" font-weight="500" fill="#085041" text-anchor="middle" dominant-baseline="central">提供方路由</text>
+<text x="575" y="484" font-size="11" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">降级 / 报错</text>
+
+<rect x="230" y="548" width="150" height="56" rx="10" fill="#F1F5F9" stroke="#94A3B8" stroke-width="0.5"/>
+<text x="305" y="566" font-size="12" font-weight="500" fill="#334155" text-anchor="middle" dominant-baseline="central">本地降级应答</text>
+<text x="305" y="586" font-size="11" fill="#475569" text-anchor="middle" dominant-baseline="central">fallback_to_mock</text>
+
+<rect x="430" y="548" width="150" height="56" rx="10" fill="#F1F5F9" stroke="#94A3B8" stroke-width="0.5"/>
+<text x="505" y="566" font-size="12" font-weight="500" fill="#334155" text-anchor="middle" dominant-baseline="central">显式报错</text>
+<text x="505" y="586" font-size="11" fill="#475569" text-anchor="middle" dominant-baseline="central">错误码 + 中文提示</text>
+
+<rect x="240" y="648" width="200" height="56" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="340" y="666" font-size="12" font-weight="500" fill="#085041" text-anchor="middle" dominant-baseline="central">后处理</text>
+<text x="340" y="686" font-size="11" fill="#0F6E56" text-anchor="middle" dominant-baseline="central">候选 · 来源 · 动作 · 历史</text>
+
+<rect x="300" y="738" width="80" height="36" rx="18" fill="#F1F5F9" stroke="#94A3B8" stroke-width="0.5"/>
+<text x="340" y="756" font-size="11" fill="#334155" text-anchor="middle" dominant-baseline="central">END</text>
+
+<path d="M340 94 V120" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M340 176 V200" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M340 256 V284" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M250 316 H90 V378" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M340 348 V362 H250 V378" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M430 316 H410 V378" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M430 316 H575 V378" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M90 434 V458" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M90 514 V620 H240 V648" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M250 434 V520 H210 V620 H240 V648" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M410 434 V444" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M330 474 V510 H305 V548" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M415 504 V620 H340 V648" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M500 474 V510 H505 V548" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M575 434 V444" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M510 474 V510 H350 V548" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M575 504 V548" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M305 604 V620 H340 V648" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M505 604 V710 H340 V738" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M340 704 V738" fill="none" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<text x="180" y="306" font-size="11" fill="#64748B">tool_plan</text>
+<text x="285" y="370" font-size="11" fill="#64748B">mock</text>
+<text x="415" y="306" font-size="11" fill="#64748B">远程</text>
+<text x="480" y="306" font-size="11" fill="#64748B">不支持</text>
+</svg>

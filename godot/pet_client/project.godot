@@ -1,0 +1,27 @@
+; Engine configuration file.
+; Godot 4 desktop-pet MVP. The Tauri/Vue client remains a migration fallback.
+config_version=5
+
+[application]
+
+config/name="灵梦桌宠"
+run/main_scene="res://scenes/Pet.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=720
+window/size/window_width_override=360
+window/size/window_height_override=360
+window/stretch/mode="canvas_items"
+window/per_pixel_transparency/allowed=true
+window/size/resizable=true
+window/size/borderless=true
+window/size/always_on_top=true
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0, 0, 0, 0)

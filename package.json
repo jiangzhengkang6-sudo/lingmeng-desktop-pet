@@ -1,18 +1,24 @@
 {
-  "name": "canvas-desktop-pet",
+  "name": "lingmeng-desktop-pet",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.4.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc -b && vite build",
-    "preview": "vite preview",
-    "test": "vitest run"
+    "dev": "vite --mode frontend",
+    "build": "vue-tsc -b && vite build --mode frontend",
+    "preview": "vite preview --mode frontend",
+    "test": "vitest run",
+    "tauri": "tauri",
+    "desktop:dev": "tauri dev",
+    "desktop:build": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-desktop.ps1"
   },
   "dependencies": {
+    "@tauri-apps/api": "^2.11.1",
+    "@volcengine/rtc": "^4.69.2",
     "vue": "^3.5.20"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4",
     "@types/node": "^24.3.0",
     "@vitejs/plugin-vue": "^6.0.1",
     "typescript": "^5.9.2",

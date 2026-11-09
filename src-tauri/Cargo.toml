@@ -1,0 +1,19 @@
+[package]
+name = "lingmeng-desktop-pet"
+version = "0.4.0"
+description = "Godot-based AI desktop pet"
+authors = ["灵梦桌宠"]
+edition = "2021"
+
+[lib]
+name = "lingmeng_desktop_pet_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+base64 = "0.22"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri = { version = "2", features = [] }

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/PetController.gd" id="1_controller"]
+[ext_resource type="Script" path="res://scripts/PetEventBridge.gd" id="2_event_bridge"]
+
+[node name="Pet" type="Node2D"]
+script = ExtResource("1_controller")
+
+[node name="Character" type="Sprite2D" parent="."]
+texture_filter = 1
+
+[node name="EventBridge" type="Node" parent="."]
+script = ExtResource("2_event_bridge")

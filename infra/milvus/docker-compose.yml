@@ -1,0 +1,24 @@
+services:
+  milvus:
+    image: milvusdb/milvus:v2.5.14
+    command: ["milvus", "run", "standalone"]
+    restart: unless-stopped
+    environment:
+      ETCD_USE_EMBED: "true"
+      COMMON_STORAGETYPE: local
+    volumes:
+      - milvus_data:/var/lib/milvus
+      - milvus_etcd:/milvus
+    ports:
+      - "127.0.0.1:19530:19530"
+      - "127.0.0.1:9091:9091"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+volumes:
+  milvus_data:
+  milvus_etcd:

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "灵梦桌宠",
+  "version": "0.4.0",
+  "identifier": "com.lingmeng.desktoppet",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build",
+    "devUrl": "http://127.0.0.1:5174",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "灵梦桌宠",
+        "width": 1440,
+        "height": 900,
+        "minWidth": 980,
+        "minHeight": 680,
+        "resizable": true,
+        "fullscreen": false,
+        "transparent": false,
+        "decorations": true,
+        "alwaysOnTop": false,
+        "visible": true,
+        "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --use-fake-ui-for-media-stream --autoplay-policy=no-user-gesture-required"
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "windows": {
+      "nsis": {
+        "installMode": "perMachine"
+      }
+    },
+    "category": "Utility",
+    "shortDescription": "Canvas-based anime-style AI desktop pet",
+    "resources": {
+      "../tools/godot/Godot_v4.7.2-stable_win64.exe": "godot/Godot_v4.7.2-stable_win64.exe",
+      "../godot/pet_client": "godot/pet_client",
+      "../backend/dist/desktop-pet-gateway": "gateway",
+      "../.env.example": "gateway/.env.example"
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

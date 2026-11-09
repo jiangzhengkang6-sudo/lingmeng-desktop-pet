@@ -1,0 +1,9 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main-window",
+  "description": "Allows the main workspace to use the Tauri event channel.",
+  "windows": ["main"],
+  "permissions": [
+    "core:event:default"
+  ]
+}

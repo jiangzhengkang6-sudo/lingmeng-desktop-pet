@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>灵梦桌宠</title>
+<style>
+  :root {
+    --ink: #1c2230; --soft: #4c5566; --muted: #8a93a5; --line: #e6e9f0;
+    --bg: #f6f7fb; --card: #ffffff;
+    --blue: #3564e0; --purple: #7a4fd0; --green: #1f9d61; --orange: #e8821e; --red: #d94848;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.75; font-size: 15.5px; }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px 70px; }
+
+  /* Hero */
+  .hero { background: linear-gradient(128deg, #2b3fb5 0%, #3564e0 42%, #7a4fd0 100%);
+    color: #fff; padding: 64px 0 56px; margin-bottom: -70px; }
+  .hero .wrap { padding-bottom: 0; }
+  .kicker { display: inline-block; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.4);
+    border-radius: 999px; padding: 4px 16px; font-size: 13px; letter-spacing: 2px; margin-bottom: 18px; }
+  .hero h1 { font-size: 40px; line-height: 1.25; letter-spacing: 1px; }
+  .hero h1 span { color: #ffd76a; }
+  .hero .sub { margin-top: 14px; font-size: 17px; opacity: .93; max-width: 760px; }
+  .hero .chips { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.35);
+    border-radius: 999px; padding: 5px 14px; font-size: 13px; }
+
+  /* Stats */
+  .stats { position: relative; z-index: 2; background: var(--card); border: 1px solid var(--line);
+    border-radius: 16px; box-shadow: 0 12px 32px rgba(28,34,48,.10);
+    display: grid; grid-template-columns: repeat(4, 1fr); overflow: hidden; }
+  .stat { padding: 22px 10px; text-align: center; }
+  .stat + .stat { border-left: 1px solid var(--line); }
+  .stat b { display: block; font-size: 28px; color: var(--blue); }
+  .stat span { font-size: 13px; color: var(--muted); }
+
+  /* Sections */
+  h2 { font-size: 24px; margin: 52px 0 6px; }
+  h2 em { font-style: normal; color: var(--blue); }
+  .lead { color: var(--soft); margin-bottom: 18px; }
+
+  /* Pain & solution */
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .panel { border-radius: 14px; padding: 24px 26px; }
+  .panel.pain { background: #fdf1ef; border: 1px solid #f3d3cd; }
+  .panel.gain { background: #eef7f1; border: 1px solid #cde8d8; }
+  .panel h3 { font-size: 16px; margin-bottom: 10px; }
+  .panel.pain h3 { color: var(--red); }
+  .panel.gain h3 { color: var(--green); }
+  .panel li { list-style: none; margin: 7px 0; color: var(--soft); font-size: 14.5px; padding-left: 24px; position: relative; }
+  .panel.pain li::before { content: "✕"; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+  .panel.gain li::before { content: "✓"; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+
+  /* Highlights */
+  .hl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .hl { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px;
+    transition: transform .15s ease, box-shadow .15s ease; }
+  .hl:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(28,34,48,.09); }
+  .hl .ico { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center;
+    justify-content: center; font-size: 20px; margin-bottom: 12px; }
+  .hl h3 { font-size: 15.5px; margin-bottom: 6px; }
+  .hl p { font-size: 13.8px; color: var(--soft); }
+
+  /* Flow */
+  .flow { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 26px; }
+  .flow svg { width: 100%; height: auto; display: block; }
+
+  /* Features */
+  .feat { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .f { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--blue);
+    border-radius: 12px; padding: 16px 20px; }
+  .f b { font-size: 15px; }
+  .f p { font-size: 13.8px; color: var(--soft); margin-top: 4px; }
+
+  .tech { display: flex; flex-wrap: wrap; gap: 10px; }
+  .tech span { background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+    padding: 7px 16px; font-size: 13.5px; color: var(--soft); }
+
+  .quote { background: linear-gradient(128deg, #eef2ff, #f4effe); border: 1px solid #dfe5f6;
+    border-radius: 14px; padding: 20px 26px; font-size: 15px; color: #33406b; }
+  .quote b { color: var(--blue); }
+
+  footer { margin-top: 56px; text-align: center; color: var(--muted); font-size: 13px; }
+  @media (max-width: 760px) {
+    .duo, .hl-grid, .feat { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .hero h1 { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="kicker">WINDOWS 桌面 AI 智能体 · 个人独立开发 · 从 0 到 1</div>
+    <h1>不只陪你聊天，<span>还能替你干活</span>的灵梦桌宠</h1>
+    <p class="sub">一款将<strong>大模型智能体</strong>、<strong>实时语音交互</strong>、<strong>Live2D 式动作渲染</strong>与<strong>本地化安全边界</strong>融为一体的 Windows 桌面 AI 伙伴——模型只负责"想"，系统替它"守门"，一切桌面操作可审计、可回溯。</p>
+    <div class="chips">
+      <span class="chip">🎤 中 / 日 / 英 语音对话</span>
+      <span class="chip">🛡️ 四层工具安全边界</span>
+      <span class="chip">🧠 用户确认制长期记忆</span>
+      <span class="chip">🔒 全链路本地化 · 密钥不出网关</span>
+      <span class="chip">📸 离线人脸身份识别</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="stats" style="margin-top:90px">
+    <div class="stat"><b>40+</b><span>REST / WebSocket 接口</span></div>
+    <div class="stat"><b>276</b><span>单元测试（前端 136 + 后端 140）</span></div>
+    <div class="stat"><b>3</b><span>种语言实时语音闭环</span></div>
+    <div class="stat"><b>4</b><span>个里程碑持续迭代</span></div>
+  </div>
+
+  <!-- 需求 -->
+  <h2>它解决什么问题？</h2>
+  <p class="lead">市面上的 AI 陪伴产品，要么是个"聊天框套壳"，要么把你的每句话都送上云端。</p>
+  <div class="duo">
+    <div class="panel pain">
+      <h3>传统 AI 桌宠 / 助手的痛点</h3>
+      <ul>
+        <li>只会聊天，动作是贴图轮播，毫无"生命感"</li>
+        <li>模型可以执行任意命令，安全全靠运气</li>
+        <li>对话记录、API Key、生物特征全托管在云端</li>
+        <li>绑定单一厂商，换模型 = 重写一遍</li>
+        <li>黑盒运行，出错不知道卡在哪一环</li>
+      </ul>
+    </div>
+    <div class="panel gain">
+      <h3>本项目的设计答案</h3>
+      <ul>
+        <li>模型输出直接驱动 <b>8+ 种动作与口型同步</b>，回复即表演</li>
+        <li>模型<strong>没有任何执行权</strong>，操作必过白名单+审批+审计</li>
+        <li>本地优先：配置、记忆、审计、人脸特征全部留在本机</li>
+        <li>OpenAI 兼容协议适配，换模型只改环境变量</li>
+        <li>全链路阶段状态 + trace_id + 本地调试历史，出错可定位</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 亮点 -->
+  <h2>六个<em>值得一提的亮点</em></h2>
+  <div class="hl-grid">
+    <div class="hl"><div class="ico" style="background:#eef2ff">🛡️</div>
+      <h3>模型无执行权的四层安全</h3>
+      <p>前端只调网关 → Pydantic 校验 → 白名单与人工审批（中风险操作 10 分钟内须确认）→ SQLite 审计留痕。即使主人验证通过，也绕不过审批。</p></div>
+    <div class="hl"><div class="ico" style="background:#f4effe">🎭</div>
+      <h3>结构化输出驱动"表演"</h3>
+      <p>大模型按 JSON Schema 严格输出情绪、动作、口型，一个响应同时驱动对话 UI、Godot 动作状态机与口型能量同步——回答即演出。</p></div>
+    <div class="hl"><div class="ico" style="background:#eef7f1">🧠</div>
+      <h3>用户确认制记忆</h3>
+      <p>模型最多"提议"3 条记忆候选，永不自动保存；主人确认后才生效，敏感信息（密钥/卡号/证件号）入库前直接拦截。</p></div>
+    <div class="hl"><div class="ico" style="background:#fdf3e3">📸</div>
+      <h3>完全离线的人脸身份</h3>
+      <p>OpenCV YuNet 检测 + SFace 128 维身份嵌入，本地余弦比对（阈值 0.45）识别主人，无云端、无上传；身份抽象为适配器协议，声纹→人脸、关键点→SFace 两次迁移权限体系零改动。</p></div>
+    <div class="hl"><div class="ico" style="background:#eef2ff">🎙️</div>
+      <h3>三语语音全链路</h3>
+      <p>唤醒词门控 → VAD 断句 → 流式 ASR → 意图规划 → TTS 合成 → 口型同步，中/日/英实测闭环，明确指令走本地规则 1 秒响应。</p></div>
+    <div class="hl"><div class="ico" style="background:#eef7f1">🧪</div>
+      <h3>工程化交付</h3>
+      <p>276 个单元测试 + 非破坏性 E2E 验收脚本 + PyInstaller/Tauri 一键 MSI 打包，降级策略保证云端故障时聊天不中断。</p></div>
+  </div>
+
+  <!-- 流程 -->
+  <h2>一次语音对话的完整旅程</h2>
+  <div class="flow">
+    <svg viewBox="0 0 980 150" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, Microsoft YaHei, sans-serif">
+      <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#3564e0"/></marker></defs>
+      <g font-size="12.5" font-weight="600" fill="#1c2230">
+        <rect x="8"   y="42" width="112" height="52" rx="10" fill="#eef2ff" stroke="#3564e0"/><text x="64"  y="64" text-anchor="middle">你开口说话</text><text x="64" y="81" text-anchor="middle" font-size="10.5" fill="#7a8296" font-weight="400">唤醒词 + VAD 断句</text>
+        <rect x="150" y="42" width="112" height="52" rx="10" fill="#fdf3e3" stroke="#e8821e"/><text x="206" y="64" text-anchor="middle">实时听懂</text><text x="206" y="81" text-anchor="middle" font-size="10.5" fill="#7a8296" font-weight="400">豆包流式 ASR</text>
+        <rect x="292" y="42" width="112" height="52" rx="10" fill="#eef7f1" stroke="#1f9d61"/><text x="348" y="64" text-anchor="middle">聪明分流</text><text x="348" y="81" text-anchor="middle" font-size="10.5" fill="#7a8296" font-weight="400">明确指令 1 秒直达工具</text>
+        <rect x="434" y="42" width="112" height="52" rx="10" fill="#eef2ff" stroke="#3564e0"/><text x="490" y="64" text-anchor="middle">深度思考</text><text x="490" y="81" text-anchor="middle" font-size="10.5" fill="#7a8296" font-weight="400">记忆 + RAG + 大模型</text>
+        <rect x="576" y="42" width="112" height="52" rx="10" fill="#f4effe" stroke="#7a4fd0"/><text x="632" y="64" text-anchor="middle">安全执行</text><text x="632" y="81" text-anchor="middle" font-size="10.5" fill="#7a8296" font-weight="400">白名单 + 审批 + 审计</text>
+        <rect x="718" y="42" width="112" height="52" rx="10" fill="#fdf3e3" stroke="#e8821e"/><text x="774" y="64" text-anchor="middle">开口回应</text><text x="774" y="81" text-anchor="middle" font-size="10.5" fill="#7a8296" font-weight="400">MiniMax 多音色 TTS</text>
+        <rect x="860" y="42" width="112" height="52" rx="10" fill="#f4effe" stroke="#7a4fd0"/><text x="916" y="64" text-anchor="middle">表情演出</text><text x="916" y="81" text-anchor="middle" font-size="10.5" fill="#7a8296" font-weight="400">动作 + 口型同步</text>
+        <line x1="120" y1="68" x2="150" y2="68" stroke="#3564e0" stroke-width="1.6" marker-end="url(#a)"/>
+        <line x1="262" y1="68" x2="292" y2="68" stroke="#3564e0" stroke-width="1.6" marker-end="url(#a)"/>
+        <line x1="404" y1="68" x2="434" y2="68" stroke="#3564e0" stroke-width="1.6" marker-end="url(#a)"/>
+        <line x1="546" y1="68" x2="576" y2="68" stroke="#3564e0" stroke-width="1.6" marker-end="url(#a)"/>
+        <line x1="688" y1="68" x2="718" y2="68" stroke="#3564e0" stroke-width="1.6" marker-end="url(#a)"/>
+        <line x1="830" y1="68" x2="860" y2="68" stroke="#3564e0" stroke-width="1.6" marker-end="url(#a)"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- 功能 -->
+  <h2>核心功能一览</h2>
+  <div class="feat">
+    <div class="f"><b>桌宠 Live 演出系统</b><p>Godot 4.7 透明窗口渲染，待机/聆听/思考/说话/不悦/害羞等动作状态机，口型随语音能量实时开合，缺资源自动回退占位动画。</p></div>
+    <div class="f"><b>受控桌面工具</b><p>查时间、开白名单应用、搜授权目录、播放/暂停音乐、设本地提醒——每一项都登记在册、分级风控、执行留痕。</p></div>
+    <div class="f"><b>RAG 角色知识库</b><p>Milvus 双集合存储角色设定与用户文档，检索片段作为"不可信参考资料"注入并附带来源，知识库故障自动降级不影响聊天。</p></div>
+    <div class="f"><b>身份与权限体系</b><p>unknown / guest / owner_verified 三态；主人解锁长期记忆与高权限工具，访客只能基础对话，每次升降级均有事件审计。</p></div>
+    <div class="f"><b>可观测调试台</b><p>ASR / Agent / TTS / 工具各阶段状态实时可视，历史记录本地持久化，重启可查、随时清空。</p></div>
+    <div class="f"><b>一键安装交付</b><p>PyInstaller 打包 Python 网关 + Tauri 生成 MSI 安装包，升级不覆盖用户配置，卸载不泄露密钥。</p></div>
+  </div>
+
+  <!-- 技术栈 -->
+  <h2>技术栈</h2>
+  <div class="tech">
+    <span>Tauri v2 (Rust)</span><span>Vue 3 + TypeScript + Vite</span><span>Godot 4.7</span>
+    <span>FastAPI + Pydantic</span><span>WebSocket 流式</span><span>SQLite</span><span>Milvus RAG</span>
+    <span>豆包 SAUC ASR</span><span>MiniMax TTS</span><span>Qwen / OpenAI 兼容 LLM</span>
+    <span>OpenCV YuNet + SFace</span><span>LangGraph</span><span>PyInstaller</span><span>Vitest + Pytest</span>
+  </div>
+
+  <div class="quote" style="margin-top:40px">
+    <b>一句话总结：</b>这不是一个"套壳聊天机器人"，而是一套完整的桌面智能体工程实践——结构化输出、工具安全边界、记忆治理、身份权限、可观测性、测试与打包交付，每一环都是真实落地、可演示、可验证的。
+  </div>
+
+  <footer>灵梦桌宠 v0.4 · 个人独立项目 · 持续迭代中</footer>
+</div>
+</body>
+</html>

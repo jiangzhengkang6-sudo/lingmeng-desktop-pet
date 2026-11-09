@@ -1,3 +1,4 @@
+import { resolveSpriteSheet } from './ResourcePackage'
 import type { PetAction, PetEvent, SpriteManifest } from '../types/pet'
 
 export type AnimatorSnapshot = {
@@ -84,7 +85,12 @@ export class SpriteAnimator {
 
   private resolveAction(requested: PetAction) {
     const definition = this.manifest.actions[requested]
-    if (definition && definition.frameIndices.length > 0) {
+    const hasMissingSheet = Boolean(
+      definition?.sheet
+      && this.manifest.spriteSheets
+      && !resolveSpriteSheet(this.manifest, definition),
+    )
+    if (definition && definition.frameIndices.length > 0 && !hasMissingSheet) {
       this.action = requested
       this.fallback = false
     } else {
